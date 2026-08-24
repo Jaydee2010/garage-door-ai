@@ -57,6 +57,13 @@
     .cta-links a:hover {
       text-decoration: underline;
     }
+    #widget-wrapper {
+      transition: transform 0.3s ease;
+      transform-origin: bottom right;
+    }
+    #widget-wrapper.shrink {
+      transform: scale(0.55);
+    }
   </style>
 </head>
 <body>
@@ -71,17 +78,19 @@
   </p>
 
   <!-- This is the actual Vapi voice widget -->
-  <vapi-widget
-    public-key="ee177ce4-6f8f-40ce-90ac-4f0907425a90"
-    assistant-id="e7cefa7d-bcd6-43f4-b641-40598676f11b"
-    mode="voice"
-    theme="dark"
-    cta-button-color="#ff6b35"
-    cta-button-text-color="#ffffff"
-    title="Garage Door AI"
-    start-button-text="Call Now"
-    end-button-text="End Call">
-  </vapi-widget>
+  <div id="widget-wrapper">
+    <vapi-widget
+      public-key="ee177ce4-6f8f-40ce-90ac-4f0907425a90"
+      assistant-id="e7cefa7d-bcd6-43f4-b641-40598676f11b"
+      mode="voice"
+      theme="dark"
+      cta-button-color="#ff6b35"
+      cta-button-text-color="#ffffff"
+      title="Garage Door AI"
+      start-button-text="Call Now"
+      end-button-text="End Call">
+    </vapi-widget>
+  </div>
 
   <script
     src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js"
@@ -89,17 +98,19 @@
     type="text/javascript">
   </script>
 
-  <div class="cta-box">
-    <h2>Ready to have this problem solved for good?</h2>
-    <div class="cta-links">
-      <a href="mailto:jmillerfakpor@gmail.com">📧 jmillerfakpor@gmail.com</a>
-      <a href="https://www.linkedin.com/in/joshuadavid-miller-fakpor-3598a0364" target="_blank" rel="noopener">💼 Connect on LinkedIn</a>
-    </div>
-  </div>
-
-</body>
-</html>
-    type="text/javascript">
+  <script>
+    // Tap anywhere outside the widget to shrink it out of the way.
+    // Tap the widget itself to bring it back to full size.
+    document.addEventListener('DOMContentLoaded', function () {
+      var wrapper = document.getElementById('widget-wrapper');
+      document.addEventListener('click', function (e) {
+        if (wrapper.contains(e.target)) {
+          wrapper.classList.remove('shrink');
+        } else {
+          wrapper.classList.add('shrink');
+        }
+      });
+    });
   </script>
 
   <div class="cta-box">
