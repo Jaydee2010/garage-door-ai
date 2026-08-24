@@ -57,12 +57,54 @@
     .cta-links a:hover {
       text-decoration: underline;
     }
-    #widget-wrapper {
-      transition: transform 0.3s ease;
-      transform-origin: bottom right;
+
+    /* Small pill button — first thing visitors see */
+    #gd-pill {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #ff6b35;
+      color: #fff;
+      font-weight: bold;
+      font-size: 15px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255, 107, 53, 0.5);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: gd-pulse 2s infinite;
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
-    #widget-wrapper.shrink {
-      transform: scale(0.55);
+    #gd-pill.hidden {
+      opacity: 0;
+      transform: scale(0.8);
+      pointer-events: none;
+    }
+    @keyframes gd-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.55); }
+      70%  { box-shadow: 0 0 0 14px rgba(255, 107, 53, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); }
+    }
+
+    /* Widget starts collapsed at the pill's spot, grows on tap */
+    #widget-wrapper {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      transform-origin: bottom right;
+      transform: scale(0);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.3s ease, opacity 0.25s ease;
+      z-index: 1000;
+    }
+    #widget-wrapper.expanded {
+      transform: scale(1);
+      opacity: 1;
+      pointer-events: auto;
     }
   </style>
 </head>
@@ -77,7 +119,10 @@
      connect. This won't happen on your real business line.
   </p>
 
-  <!-- This is the actual Vapi voice widget -->
+  <!-- Small pill button visitors see first -->
+  <div id="gd-pill">🔧 Garage Door AI — Tap Me</div>
+
+  <!-- This is the actual Vapi voice widget, starts hidden/collapsed -->
   <div id="widget-wrapper">
     <vapi-widget
       public-key="ee177ce4-6f8f-40ce-90ac-4f0907425a90"
@@ -99,15 +144,29 @@
   </script>
 
   <script>
-    // Tap anywhere outside the widget to shrink it out of the way.
-    // Tap the widget itself to bring it back to full size.
     document.addEventListener('DOMContentLoaded', function () {
+      var pill = document.getElementById('gd-pill');
       var wrapper = document.getElementById('widget-wrapper');
+
+      function expand() {
+        pill.classList.add('hidden');
+        wrapper.classList.add('expanded');
+      }
+      function collapse() {
+        wrapper.classList.remove('expanded');
+        pill.classList.remove('hidden');
+      }
+
+      pill.addEventListener('click', function (e) {
+        e.stopPropagation();
+        expand();
+      });
+
       document.addEventListener('click', function (e) {
-        if (wrapper.contains(e.target)) {
-          wrapper.classList.remove('shrink');
-        } else {
-          wrapper.classList.add('shrink');
+        var tappedInsideWidget = wrapper.contains(e.target);
+        var tappedPill = pill.contains(e.target);
+        if (!tappedInsideWidget && !tappedPill) {
+          collapse();
         }
       });
     });
